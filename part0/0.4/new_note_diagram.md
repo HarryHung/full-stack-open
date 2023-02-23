@@ -14,6 +14,7 @@ sequenceDiagram
     activate server
     server->>browser: HTML Document
     deactivate server
+    Note right of browser: HTML requests CSS and JavaScript files
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
     activate server

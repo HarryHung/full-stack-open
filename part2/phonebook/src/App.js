@@ -14,10 +14,14 @@ const App = () => {
 
   const addNumber = (event) => {
     event.preventDefault()
-    setPersons(
-      [...persons,
-      { name: newName}]
-    )
+    if (persons.find(person => person.name === newName)) {
+      alert(`${newName} is already added to phonebook`)
+    } else {
+      setPersons(
+        [...persons,
+        { name: newName }]
+      )
+    }
   }
 
   const handleNameChange = (event) => setNewName(event.target.value)

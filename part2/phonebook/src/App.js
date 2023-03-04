@@ -36,10 +36,26 @@ const App = () => {
     }
   }
 
-  const handleFilterChange =(event) => setNewFilter(event.target.value)
+  const handleFilterChange = (event) => setNewFilter(event.target.value)
   const handleNameChange = (event) => setNewName(event.target.value)
-  const handleNumberChange =(event) => setNewNumber(event.target.value)
+  const handleNumberChange = (event) => setNewNumber(event.target.value)
   
+  const handleDel = (id, name) => {
+    if (window.confirm(`Delete ${name} ?`)) {
+      phonebookService
+        .del(id)
+        .then(resp => {
+          setPersons(persons.filter(n => n.id !== id))
+        })
+        .catch(error => {
+          alert(
+            `'${name}' was already deleted from server`
+          )
+          setPersons(persons.filter(n => n.id !== id))
+        })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -47,7 +63,7 @@ const App = () => {
       <h3>add a new</h3>
       <PersonForm handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} onSubmit={addNumber}/>
       <h3>Numbers</h3>
-      <Persons persons={persons} filter={newFilter}/>
+      <Persons persons={persons} filter={newFilter} handleDel={handleDel}/>
     </div>
   )
 }

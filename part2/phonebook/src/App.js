@@ -4,6 +4,7 @@ import phonebookService from './services/phonebook'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,6 +12,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState(null)
 
   useEffect(() => {
     phonebookService
@@ -31,11 +34,16 @@ const App = () => {
           .update(found.id, changedPerson)
           .then(returnedPerson => {
             setPersons(persons.map(n => n.id !== found.id ? n : returnedPerson))
+            setMessage(`Changed number of ${newName} to ${newNumber}`)
+            setMessageType('info')
+            setTimeout(() => {
+              setMessage(null)
+              setMessageType(null)
+            }, 5000)
           })
           .catch(error => {
-            alert(
-              `'${newName}' was already deleted from server`
-            )
+            setMessage(`Information of ${newName} has already been removed from server`)
+            setMessageType('error')
             setPersons(persons.filter(n => n.id !== found.id))
           })
       }
@@ -46,6 +54,12 @@ const App = () => {
         setPersons(
           [...persons, returnedPerson]
         )
+        setMessage(`Added ${newName}`)
+        setMessageType('info')
+        setTimeout(() => {
+          setMessage(null)
+          setMessageType(null)
+        }, 5000)
       })
     }
   }
@@ -62,9 +76,8 @@ const App = () => {
           setPersons(persons.filter(n => n.id !== id))
         })
         .catch(error => {
-          alert(
-            `'${name}' was already deleted from server`
-          )
+          setMessage(`Information of ${newName} has already been removed from server`)
+          setMessageType('error')
           setPersons(persons.filter(n => n.id !== id))
         })
     }
@@ -73,6 +86,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} type={messageType} />
       <Filter handle={handleFilterChange}/>
       <h3>add a new</h3>
       <PersonForm handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} onSubmit={addNumber}/>

@@ -8,6 +8,7 @@ import Information from './components/Information'
 function App() {
   const [countries, setCountries] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
+  const [query, setQuery] = useState(null)
 
   useEffect(() => {
     countriesService
@@ -17,19 +18,19 @@ function App() {
       })
   }, [])
 
-  const handleValueChange = (event) => {
-    const query = event.target.value.toLowerCase()   
-    const selected = countries.filter(country => country.name.common.toLowerCase().includes(query))
-    
+  useEffect(() => {
+    const selected = countries.filter(country => query && country.name.common.toLowerCase().includes(query))
     setSelectedCountries(selected)
-  }
+  }, [query])
+
+  const handleQueryChange = (event) => setQuery(event.target.value.toLowerCase())
 
   return (
     <div>
-      <Filter handleValueChange={ handleValueChange }/>
-      <Information selectedCountries={selectedCountries}/>
+      <Filter handleQueryChange={ handleQueryChange }/>
+      <Information selectedCountries={selectedCountries} handleQueryChange={handleQueryChange}/>
     </div>
-  );
+  )
 }
 
 export default App;

@@ -1,8 +1,7 @@
-const Filter = ({ handleValueChange }) => {
+const Filter = ({ handleQueryChange }) => {
     return (
-        <div>
-            
-            <form>find countries <input onChange={handleValueChange}></input></form>
+        <div> 
+            <form>find countries <input onChange={handleQueryChange}></input></form>
         </div>
     )
 }

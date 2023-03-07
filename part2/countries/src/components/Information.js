@@ -1,23 +1,37 @@
-const Information = ({ selectedCountries }) => {
+const Information = ({ selectedCountries, handleQueryChange }) => {
     const count = selectedCountries.length
-    if (count === 0)
-    {
-        return
-    } else if ( count > 10 ) {
-        return <div>Too many matches, specify another filter</div>
-    } else if (count > 1 ){
-        return <ListCountry selectedCountries={selectedCountries} />
-    } else {
-        return <CountryDetail country={selectedCountries[0]} />
-    }
+
+    return (
+        <div>
+            {count > 10 && <Note/>}
+            {count <= 10 && <Result selectedCountries={selectedCountries} handleQueryChange={handleQueryChange}/>}
+        </div>
+    )
 } 
 
-const ListCountry = ({ selectedCountries }) => {
-    const countryList = selectedCountries.map(country => country.name.common).sort()
-    return countryList.map(country => <div key={country}>{country}</div>) 
+const Note = () => <div>Too many matches, specify another filter</div>
+
+const Result = ({ selectedCountries, handleQueryChange }) => {
+    const countriesList = selectedCountries.sort((a, b) => a.name.common.localeCompare(b.name.common))
+    return (
+        <div>
+            {selectedCountries.length > 1 && <ListCountry countriesList={countriesList} handleQueryChange={handleQueryChange}/>}
+            {selectedCountries.length == 1 && <CountryDetail country={countriesList[0]}/>}
+        </div>
+    )
 }
 
-const CountryDetail = ( {country} ) =>{
+const ListCountry = ( {countriesList, handleQueryChange} ) => {
+    return countriesList.map(
+        country => 
+            <div key={country.name.common}>
+                {country.name.common}
+                <button value={country.name.common} onClick={handleQueryChange}>show</button>
+            </div>
+        )
+}
+
+const CountryDetail = ( {country} ) => {
     return (
         <div>
             <h1>{country.name.common}</h1>

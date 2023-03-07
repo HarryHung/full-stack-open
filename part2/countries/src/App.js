@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     countriesService
-      .getAll()
+      .getCountries()
       .then(resp => {
         setCountries(resp)
       })
@@ -21,7 +21,7 @@ function App() {
   useEffect(() => {
     const selected = countries.filter(country => query && country.name.common.toLowerCase().includes(query))
     setSelectedCountries(selected)
-  }, [query])
+  }, [countries, query])
 
   const handleQueryChange = (event) => setQuery(event.target.value.toLowerCase())
 

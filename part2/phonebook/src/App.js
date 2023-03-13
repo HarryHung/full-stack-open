@@ -42,9 +42,11 @@ const App = () => {
             }, 5000)
           })
           .catch(error => {
-            setMessage(`Information of ${newName} has already been removed from server`)
+            setMessage(error.response.data.error)
             setMessageType('error')
-            setPersons(persons.filter(n => n.id !== found.id))
+            if (error.response.status === 404) {
+              setPersons(persons.filter(n => n.id !== found.id))
+            }
           })
       }
     } else {

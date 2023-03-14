@@ -2,3 +2,5 @@ part2/note
 .DS_Store
 .env
 part3/course
+part4/course
+node_modules

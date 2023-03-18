@@ -20,14 +20,28 @@ const mostBlogs = (blogs) => {
     return "empty array"
   }
 
-  const countBy = _.countBy(blogs, 'author')
-  const countByReformat = _.map(countBy, (val, key) => ({ author: key, blogs: val }))
-  return _.maxBy(countByReformat, 'blogs')
+  return _(blogs)
+          .countBy('author')
+          .map((val, key) => ({ author: key, blogs: val }))
+          .maxBy('blogs')
 }
+
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) {
+    return "empty array"
+  }
+
+  return _(blogs)
+          .groupBy('author')
+          .map((group) => ({ author: group[0].author, likes: _.sumBy(group, 'likes') }))
+          .maxBy('likes')
+}
+
 
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }

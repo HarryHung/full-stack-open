@@ -36,7 +36,7 @@ test('the unique identifier property of the blog posts is named id, not _id', as
 })
 
 test ('a valid blog can be added' , async () => {
-  const newBlog =   {
+  const newBlog = {
     title: "New Blog",
     author: "New Author",
     url: "https://newblog.com/",
@@ -56,6 +56,31 @@ test ('a valid blog can be added' , async () => {
   expect(titles).toContain(
     'New Blog'
   )
+})
+
+test ('default to 0 if the likes property is missing from the request' , async () => {
+  const newBlog = {
+    title: "Missing Like Title",
+    author: "Missing Like Author",
+    url: "https://missing-like.com/"
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+  const blogsAtEnd = await helper.blogsInDb()  
+
+  const blogToCheck = blogsAtEnd.at(-1)
+
+  const resultBlog = await api
+    .get(`/api/blogs/${blogToCheck.id}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+  
+  expect(resultBlog.body.likes).toEqual(0)
 })
 
 afterAll(async () => {

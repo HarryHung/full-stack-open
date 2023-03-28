@@ -83,6 +83,38 @@ test ('default to 0 if the likes property is missing from the request' , async (
   expect(resultBlog.body.likes).toEqual(0)
 })
 
+test('blog without title is not added', async () => {
+  const newBlog = {
+    author: "Missing title",
+    url: "https://missing-title.com/"
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
+
+test('blog without url is not added', async () => {
+  const newBlog = {
+    title: "Missing url",
+    author: "Missing url",
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })

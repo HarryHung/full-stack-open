@@ -54,6 +54,8 @@ blogsRouter.delete('/:id', async (request, response) => {
 
   if (blogToDelete && blogToDelete.user.toString() === user.id.toString()){
     await Blog.findByIdAndRemove(blogToDelete.id)
+    user.blogs = user.blogs.filter(blog => blog.toString() !== blogToDelete._id.toString())
+    await user.save()
     response.status(204).end()
   } else {
     response.status(401).end()

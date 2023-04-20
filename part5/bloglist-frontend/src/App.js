@@ -3,6 +3,8 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+import Notification from './components/Notification'
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
 
@@ -13,6 +15,9 @@ const App = () => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
+
+  const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -46,9 +51,14 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      alert('Wrong credentials')
+        setMessage('wrong username or password')
+        setMessageType('error')
+        setTimeout(() => {
+          setMessage('')
+          setMessageType('')
+        }, 5000)
+      }
     }
-  }
 
   const handleLogout = (event) => {
     window.localStorage.removeItem('loggedBlogappUser')
@@ -63,12 +73,27 @@ const App = () => {
       url: newURL
     }
 
-    const returnedBlog = await blogService.create(blogObject)
-    setBlogs(blogs.concat(returnedBlog.data))
-    
-    setNewTitle('')
-    setNewAuthor('')
-    setNewURL('')
+    try {
+      const returnedBlog = await blogService.create(blogObject)
+      setBlogs(blogs.concat(returnedBlog.data))
+      setMessage(`a new blog ${returnedBlog.data.title} by ${returnedBlog.data.author} added`)
+      setMessageType('info')
+      setTimeout(() => {
+        setMessage('')
+        setMessageType('')
+      }, 5000)
+      
+      setNewTitle('')
+      setNewAuthor('')
+      setNewURL('')
+    } catch (exception) {
+        setMessage(exception.response.data.error)
+        setMessageType('error')
+        setTimeout(() => {
+          setMessage('')
+          setMessageType('')
+        }, 5000)
+      }
   }
 
   const blogForm = () => (
@@ -84,6 +109,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
+        <Notification message={message} type={messageType} />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -112,6 +138,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={message} type={messageType} />
       <p>{user.name} logged in<button onClick={handleLogout}>logout</button></p>
       <h2>create new</h2>
       {blogForm()}

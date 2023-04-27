@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+
 import Blog from './components/Blog'
+import Notification from './components/Notification'
+import Togglable from './components/Togglable'
+
 import blogService from './services/blogs'
 import loginService from './services/login'
 
-import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -83,6 +86,8 @@ const App = () => {
         setMessageType('')
       }, 5000)
       
+      blogFormRef.current.toggleVisibility()
+
       setNewTitle('')
       setNewAuthor('')
       setNewURL('')
@@ -96,13 +101,18 @@ const App = () => {
       }
   }
 
+  const blogFormRef = useRef()
+
   const blogForm = () => (
-    <form onSubmit={createBlog}>
-      <div>title:<input value={newTitle} onChange={(event) => setNewTitle(event.target.value)}/></div>
-      <div>author:<input value={newAuthor} onChange={(event) => setNewAuthor(event.target.value)}/></div>
-      <div>url:<input value={newURL} onChange={(event) => setNewURL(event.target.value)}/></div>
-      <button type="submit">create</button>
-    </form>
+    <Togglable buttonLabel='new note' ref = {blogFormRef}>
+      <h2>create new</h2>
+      <form onSubmit={createBlog}>
+        <div>title:<input value={newTitle} onChange={(event) => setNewTitle(event.target.value)}/></div>
+        <div>author:<input value={newAuthor} onChange={(event) => setNewAuthor(event.target.value)}/></div>
+        <div>url:<input value={newURL} onChange={(event) => setNewURL(event.target.value)}/></div>
+        <button type="submit">create</button>
+      </form>
+    </Togglable>
   )
 
   if (user === null) {
@@ -140,7 +150,6 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={message} type={messageType} />
       <p>{user.name} logged in<button onClick={handleLogout}>logout</button></p>
-      <h2>create new</h2>
       {blogForm()}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />

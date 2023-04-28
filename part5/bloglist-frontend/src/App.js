@@ -68,7 +68,7 @@ const App = () => {
   const createBlog = async (blogObject) => {
     try {
       const returnedBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(returnedBlog.data))
+      setBlogs(blogs.concat({...returnedBlog.data, user: {name: user.name}}))
       setMessage(`a new blog ${returnedBlog.data.title} by ${returnedBlog.data.author} added`)
       setMessageType('info')
       setTimeout(() => {

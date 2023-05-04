@@ -84,7 +84,14 @@ const App = () => {
           setMessage('')
           setMessageType('')
         }, 5000)
-      }
+    }
+  }
+
+  const updateBlog = async (id, blogObject) => {
+    await blogService.update(id, blogObject)
+    
+    const blogs = await blogService.getAll()
+    setBlogs(blogs)
   }
 
   const blogFormRef = useRef()
@@ -132,7 +139,7 @@ const App = () => {
       <p>{user.name} logged in<button onClick={handleLogout}>logout</button></p>
       {blogForm()}
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </div>
   )

@@ -138,7 +138,7 @@ const App = () => {
       <Notification message={message} type={messageType} />
       <p>{user.name} logged in<button onClick={handleLogout}>logout</button></p>
       {blogForm()}
-      {blogs.map(blog =>
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
         <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </div>

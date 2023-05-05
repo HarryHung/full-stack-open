@@ -94,6 +94,13 @@ const App = () => {
     setBlogs(blogs)
   }
 
+  const delBlog = async id => {
+    await blogService.del(id)
+    
+    const blogs = await blogService.getAll()
+    setBlogs(blogs)
+  }
+
   const blogFormRef = useRef()
 
   const blogForm = () => (
@@ -139,7 +146,7 @@ const App = () => {
       <p>{user.name} logged in<button onClick={handleLogout}>logout</button></p>
       {blogForm()}
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} delBlog={delBlog} user={user} />
       )}
     </div>
   )

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, updateBlog, delBlog, user }) => {
   const [visible, setVisible] = useState(false)
@@ -6,7 +7,7 @@ const Blog = ({ blog, updateBlog, delBlog, user }) => {
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
 
-  const showWhenUser = {display: user.username === blog.user.username ? '' : 'none'}
+  const showWhenUser = { display: user.username === blog.user.username ? '' : 'none' }
 
   const toggleVisibility = () => {
     setVisible(!visible)
@@ -49,7 +50,15 @@ const Blog = ({ blog, updateBlog, delBlog, user }) => {
         <div>{blog.user.name}</div>
         <button onClick={removeBlog} style={showWhenUser}>remove</button>
       </div>
-  </div>
-)}
+    </div>
+  )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  updateBlog: PropTypes.func.isRequired,
+  delBlog:PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired
+}
 
 export default Blog

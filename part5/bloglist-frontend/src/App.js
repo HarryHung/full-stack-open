@@ -12,8 +12,8 @@ import loginService from './services/login'
 const App = () => {
   const [blogs, setBlogs] = useState([])
 
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   const [message, setMessage] = useState('')
@@ -22,10 +22,10 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
-  useEffect(() =>{
+  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
@@ -51,16 +51,16 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-        setMessage('wrong username or password')
-        setMessageType('error')
-        setTimeout(() => {
-          setMessage('')
-          setMessageType('')
-        }, 5000)
-      }
+      setMessage('wrong username or password')
+      setMessageType('error')
+      setTimeout(() => {
+        setMessage('')
+        setMessageType('')
+      }, 5000)
     }
+  }
 
-  const handleLogout = (event) => {
+  const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
   }
@@ -75,28 +75,28 @@ const App = () => {
         setMessage('')
         setMessageType('')
       }, 5000)
-      
+
       blogFormRef.current.toggleVisibility()
     } catch (exception) {
-        setMessage(exception.response.data.error)
-        setMessageType('error')
-        setTimeout(() => {
-          setMessage('')
-          setMessageType('')
-        }, 5000)
+      setMessage(exception.response.data.error)
+      setMessageType('error')
+      setTimeout(() => {
+        setMessage('')
+        setMessageType('')
+      }, 5000)
     }
   }
 
   const updateBlog = async (id, blogObject) => {
     await blogService.update(id, blogObject)
-    
+
     const blogs = await blogService.getAll()
     setBlogs(blogs)
   }
 
   const delBlog = async id => {
     await blogService.del(id)
-    
+
     const blogs = await blogService.getAll()
     setBlogs(blogs)
   }
@@ -117,7 +117,7 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-              <input
+            <input
               type="text"
               value={username}
               name="Username"
@@ -126,7 +126,7 @@ const App = () => {
           </div>
           <div>
             password
-              <input
+            <input
               type="password"
               value={password}
               name="Password"
@@ -134,7 +134,7 @@ const App = () => {
             />
           </div>
           <button type="submit">login</button>
-        </form>      
+        </form>
       </div>
     )
   }

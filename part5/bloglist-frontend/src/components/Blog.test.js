@@ -7,6 +7,8 @@ import Blog from './Blog'
 describe('Blog component', () => {
 
   let container
+  let mockUpdateHandler
+  let mockDelHandler
 
   beforeEach(() => {
     const blog = {
@@ -21,9 +23,10 @@ describe('Blog component', () => {
       username: 'test_user'
     }
 
-    const mockHandler = jest.fn()
+    mockUpdateHandler = jest.fn()
+    mockDelHandler = jest.fn()
 
-    container = render(< Blog blog={blog} updateBlog={mockHandler} delBlog={mockHandler} user={user}/>).container
+    container = render(< Blog blog={blog} updateBlog={mockUpdateHandler} delBlog={mockDelHandler} user={user}/>).container
   })
 
   test('render title and author, but not URL or number of likes', () => {
@@ -59,5 +62,14 @@ describe('Blog component', () => {
 
     const likes = container.querySelector('.blog-likes')
     expect(likes).toBeVisible()
+  })
+
+  test('When the like button is clicked twice, event handler is called twice', async () => {
+    const user = userEvent.setup()
+    const button = container.querySelector('.blog-like-button')
+    await user.click(button)
+    await user.click(button)
+
+    expect(mockUpdateHandler.mock.calls).toHaveLength(2)
   })
 })

@@ -1,42 +1,63 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
 import { render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
-test('render title and author, but not URL or number of likes', () => {
-  const blog = {
-    title: 'test title',
-    author: 'test author',
-    likes: '369',
-    url: 'http://www.test.com/',
-    user: { username: 'test_user' }
-  }
+describe('Blog component', () => {
 
-  const user = {
-    username: 'test_user'
-  }
+  let container
 
-  const mockHandler = jest.fn()
+  beforeEach(() => {
+    const blog = {
+      title: 'test title',
+      author: 'test author',
+      likes: '369',
+      url: 'http://www.test.com/',
+      user: { username: 'test_user' }
+    }
 
-  const { container } = render(< Blog blog={blog} updateBlog={mockHandler} delBlog={mockHandler} user={user}/>)
+    const user = {
+      username: 'test_user'
+    }
 
-  const title = container.querySelector('.blog-title')
-  expect(title).toBeDefined()
-  expect(title.textContent).toBe('test title')
-  expect(title).toBeVisible()
+    const mockHandler = jest.fn()
 
-  const author = container.querySelector('.blog-author')
-  expect(author).toBeDefined()
-  expect(author.textContent).toBe('test author')
-  expect(author).toBeVisible()
+    container = render(< Blog blog={blog} updateBlog={mockHandler} delBlog={mockHandler} user={user}/>).container
+  })
 
-  const url = container.querySelector('.blog-url')
-  expect(url).toBeDefined()
-  expect(url.textContent).toBe('http://www.test.com/')
-  expect(url).not.toBeVisible()
+  test('render title and author, but not URL or number of likes', () => {
 
-  const likes = container.querySelector('.blog-likes')
-  expect(likes).toBeDefined()
-  expect(likes.textContent).toContain('369')
-  expect(likes).not.toBeVisible()
+    const title = container.querySelector('.blog-title')
+    expect(title).toBeDefined()
+    expect(title.textContent).toBe('test title')
+    expect(title).toBeVisible()
+
+    const author = container.querySelector('.blog-author')
+    expect(author).toBeDefined()
+    expect(author.textContent).toBe('test author')
+    expect(author).toBeVisible()
+
+    const url = container.querySelector('.blog-url')
+    expect(url).toBeDefined()
+    expect(url.textContent).toBe('http://www.test.com/')
+    expect(url).not.toBeVisible()
+
+    const likes = container.querySelector('.blog-likes')
+    expect(likes).toBeDefined()
+    expect(likes.textContent).toContain('369')
+    expect(likes).not.toBeVisible()
+  })
+
+  test('after clicking view button, show URL and number of likes', async () => {
+    const user = userEvent.setup()
+    const button = container.querySelector('.blog-view-button')
+    await user.click(button)
+
+    const url = container.querySelector('.blog-url')
+    expect(url).toBeVisible()
+
+    const likes = container.querySelector('.blog-likes')
+    expect(likes).toBeVisible()
+  })
 })

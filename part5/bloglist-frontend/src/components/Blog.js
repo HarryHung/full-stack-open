@@ -42,8 +42,8 @@ const Blog = ({ blog, updateBlog, delBlog, user }) => {
       <div>
         <div className='blog-title'>{blog.title}</div>
         <div className='blog-author'>{blog.author}</div>
-        <button onClick={toggleVisibility} style={hideWhenVisible}>view</button>
-        <button onClick={toggleVisibility} style={showWhenVisible}>hide</button>
+        <button onClick={toggleVisibility} style={hideWhenVisible} className='blog-view-button'>view</button>
+        <button onClick={toggleVisibility} style={showWhenVisible} className='blog-hide-button'>hide</button>
       </div>
       <div style={showWhenVisible}>
         <div className='blog-url'>{blog.url}</div>

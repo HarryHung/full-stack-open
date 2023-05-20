@@ -1,12 +1,21 @@
 describe('Blog app', function() {
   beforeEach(function() {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
+
     const user = {
       name: 'Test User',
       username: 'test_user',
       password: 'password123'
     }
     cy.request('POST', 'http://localhost:3003/api/users', user)
+
+    const user2 = {
+      name: 'Test User2',
+      username: 'test_user2',
+      password: 'password123'
+    }
+    cy.request('POST', 'http://localhost:3003/api/users', user2)
+
     cy.visit('http://localhost:3000')
   })
 
@@ -38,9 +47,7 @@ describe('Blog app', function() {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.get('#username').type('test_user')
-      cy.get('#password').type('password123')
-      cy.get('#login-button').click()
+      cy.login({ username: 'test_user', password: 'password123' })
     })
 
     it('A blog can be created', function() {
@@ -60,11 +67,7 @@ describe('Blog app', function() {
     })
 
     it('A blog can be liked', function() {
-      cy.contains('create new blog').click()
-      cy.get('#new-title').type('test title')
-      cy.get('#new-author').type('test author')
-      cy.get('#new-url').type('http://www.test.com/')
-      cy.get('#create-button').click()
+      cy.createBlog({ title: 'test title', author: 'test author', url: 'http://www.test.com' })
 
       cy.contains('view').click()
       cy.contains('like').click()
@@ -72,11 +75,7 @@ describe('Blog app', function() {
     })
 
     it('Creator can delete a blog', function() {
-      cy.contains('create new blog').click()
-      cy.get('#new-title').type('test title')
-      cy.get('#new-author').type('test author')
-      cy.get('#new-url').type('http://www.test.com/')
-      cy.get('#create-button').click()
+      cy.createBlog({ title: 'test title', author: 'test author', url: 'http://www.test.com' })
 
       cy.contains('view').click()
       cy.contains('remove').click()
@@ -84,6 +83,17 @@ describe('Blog app', function() {
       cy.get('.blogs')
         .should('not.contain', 'test title')
         .and('not.contain', 'test author')
+    })
+
+    it('Only creator can see delete button', function() {
+      cy.createBlog({ title: 'test title', author: 'test author', url: 'http://www.test.com' })
+
+      cy.contains('view').click()
+      cy.contains('remove').should('be.visible')
+
+      cy.login({ username: 'test_user2', password: 'password123' })
+      cy.contains('view').click()
+      cy.contains('remove').should('not.be.visible')
     })
   })
 })

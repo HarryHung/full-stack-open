@@ -59,7 +59,7 @@ describe('Blog app', function() {
         .and('contain', 'test author')
     })
 
-    it.only('A blog can be liked', function() {
+    it('A blog can be liked', function() {
       cy.contains('create new blog').click()
       cy.get('#new-title').type('test title')
       cy.get('#new-author').type('test author')
@@ -69,6 +69,21 @@ describe('Blog app', function() {
       cy.contains('view').click()
       cy.contains('like').click()
       cy.contains('likes 1')
+    })
+
+    it('Creator can delete a blog', function() {
+      cy.contains('create new blog').click()
+      cy.get('#new-title').type('test title')
+      cy.get('#new-author').type('test author')
+      cy.get('#new-url').type('http://www.test.com/')
+      cy.get('#create-button').click()
+
+      cy.contains('view').click()
+      cy.contains('remove').click()
+
+      cy.get('.blogs')
+        .should('not.contain', 'test title')
+        .and('not.contain', 'test author')
     })
   })
 })

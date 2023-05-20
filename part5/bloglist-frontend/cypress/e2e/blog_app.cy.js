@@ -95,5 +95,19 @@ describe('Blog app', function() {
       cy.contains('view').click()
       cy.contains('remove').should('not.be.visible')
     })
+
+    it('Blogs are ordered according to likes in descending order', function() {
+      cy.createBlog({ title: 'less likes', author: 'test author', url: 'http://www.test.com' })
+      cy.createBlog({ title: 'more likes', author: 'test author', url: 'http://www.test.com' })
+
+      cy.get('.blog').eq(0).contains('less like')
+      cy.get('.blog').eq(1).contains('more like')
+
+      cy.contains('more like').parent().contains('view').click()
+      cy.contains('more like').parent().parent().find('button').contains('like').click()
+
+      cy.get('.blog').eq(0).contains('more like')
+      cy.get('.blog').eq(1).contains('less like')
+    })
   })
 })

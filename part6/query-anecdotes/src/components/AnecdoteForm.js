@@ -6,8 +6,19 @@ const AnecdoteForm = () => {
   const queryClient = useQueryClient()
 
   const newAnecdoteMutation = useMutation(createAnecdote, {
-    onSuccess: () => {
+    onSuccess: (anecdote) => {
       queryClient.invalidateQueries('anecdotes')
+      dispatch({ type: 'show', payload: `anecdote '${anecdote.content}' created` })
+      setTimeout(() => {dispatch({ type: 'hide' })}, 5000)
+    },
+    onError: (error) => {
+      if (error.response.status === 400) {
+        dispatch({ type: 'show', payload: `${error.response.data.error}` })
+        setTimeout(() => {dispatch({ type: 'hide' })}, 5000)
+      } else {
+        dispatch({ type: 'show', payload: 'Unknown error' })
+        setTimeout(() => {dispatch({ type: 'hide' })}, 5000)
+      }
     }
   })
 
@@ -18,8 +29,6 @@ const AnecdoteForm = () => {
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
     newAnecdoteMutation.mutate({ content, vote: 0 })
-    dispatch({ type: 'show', payload: `anecdote '${content}' created` })
-    setTimeout(() => {dispatch({ type: 'hide' })}, 5000)
 }
 
   return (

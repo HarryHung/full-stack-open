@@ -3,7 +3,8 @@ import {
   Routes,
   Route,
   Link,
-  useMatch
+  useMatch,
+  useNavigate
 } from "react-router-dom"
 
 const Menu = () => {
@@ -56,6 +57,12 @@ const About = () => (
   </div>
 )
 
+const Notification = ({ notification }) => {
+  return(
+    <div>{notification}</div>
+  )
+}
+
 const Footer = () => (
   <div>
     Anecdote app for <a href='https://fullstackopen.com/'>Full Stack Open</a>.
@@ -69,6 +76,7 @@ const CreateNew = (props) => {
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
 
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -78,6 +86,8 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    navigate('/')
+    props.showNotification(`a new anecdote ${content} created!`)
   }
 
   return (
@@ -123,6 +133,11 @@ const App = () => {
 
   const [notification, setNotification] = useState('')
 
+  const showNotification = (content) => {
+    setNotification(content)
+    setTimeout(() => setNotification(''), 5000)
+  }
+
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
@@ -152,9 +167,10 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification notification={notification}/>
       <Routes>
         <Route path="/anecdotes/:id" element={ <Anecdote anecdote={anecdote} /> } />
-        <Route path="/create" element={ <CreateNew addNew={addNew} /> } />
+        <Route path="/create" element={ <CreateNew addNew={addNew} showNotification={showNotification}/> } />
         <Route path="/about" element={ <About /> } />
         <Route path="/" element={ <AnecdoteList anecdotes={anecdotes} /> } />
       </Routes>
